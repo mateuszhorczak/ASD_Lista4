@@ -1,6 +1,9 @@
 class Node:                         # 0 - czarny, 1 - czerwony
-    def __init__(self, value):
-        self.val = value            # Wartosc wezla
+    def __init__(self, person_surname, person_name, person_address, person_number):
+        self.surname = person_surname            # Wartosc wezla
+        self.name = person_name
+        self.address = person_address
+        self.number = person_number
         self.parent = None          # Rodzic wezla
         self.left = None            # Lewe dziecko wezla
         self.right = None           # Prawe dziecko wezla
@@ -8,17 +11,24 @@ class Node:                         # 0 - czarny, 1 - czerwony
 
 class RBTree:
     def __init__(self):
-        self.NULL = Node(0)
+        self.NULL = Node(0, 0, 0, 0)
         self.NULL.color = 0
+        self.NULL.surname = 0
+        self.NULL.name = 0
+        self.NULL.address = 0
+        self.NULL.number = 0
         self.NULL.left = None
         self.NULL.right = None
         self.root = self.NULL
 
 
-    def insertNode(self, key):
-        node = Node(key)
+    def insertNode(self, person_surname, person_name, person_address, person_number):
+        node = Node(person_surname, person_name, person_address, person_number)
         node.parent = None
-        node.value = key
+        self.NULL.surname = person_surname
+        self.NULL.name = person_name
+        self.NULL.address = person_address
+        self.NULL.number = person_number
         node.left = self.NULL
         node.right = self.NULL
         node.color = 1              # ustawia kolor roota na czerwony
@@ -28,7 +38,9 @@ class RBTree:
 
         while x != self.NULL:       # szuka miejsca na nowy wezel
             y = x
-            if node.val < x.val:
+            if node.surname < x.surname or \
+                    (node.surname == x.surname and node.name < x.name) or \
+                    (node.surname == x.surname and node.name == x.name and node.address < x.address):
                 x = x.left
             else:
                 x = x.right
@@ -36,13 +48,15 @@ class RBTree:
         node.parent = y
         if y is None:               # jesli wezel po przypisaniu nie ma rodzica, to jest to root
             self.root = node
-        elif node.val < y.val:      # jezeli wartosc w wezle jest mniejsza przypisuje ja z lewej,
-            y.left = node           # jak wieksza lub rowna to z prawej
+        elif node.surname < y.surname or \
+                    (node.surname == y.surname and node.name < y.name) or \
+                    (node.surname == y.surname and node.name == y.name and node.address < y.address):
+            y.left = node
         else:
             y.right = node
 
         if node.parent is None:         # root jest zawsze czarny
-            node.color = 0              # czarny
+            node.color = 0
             return
         if node.parent.parent is None:  # czy rodzic wezla jest rootem
             return
@@ -181,17 +195,19 @@ class RBTree:
         v.parent = u.parent
 
 
-    def delete_node_helper(self, node, key):
+    def delete_node_helper(self, node, surname, name, address):
         z = self.NULL
         while node != self.NULL:
-            if node.val == key:
+            if node.surname == surname and node.name == name and node.address == address:
                 z = node
-            if node.val <= key:
+            if node.surname < surname or \
+                    (node.surname == surname and node.name < name) or \
+                    (node.surname == surname and node.name == name and node.address < address):
                 node = node.right
             else:
                 node = node.left
         if z == self.NULL:
-            print("Value not present in Tree!")
+            print("Nie znaleziono podanej osoby")
             return
         y = z
         y_original_color = y.color
@@ -217,22 +233,23 @@ class RBTree:
             y.color = z.color
         if y_original_color == 0:
             self.fixDelete(x)
+        print("Poprawnie usunieto osobe")
 
 
-    def delete_node(self, val):
-        self.delete_node_helper(self.root, val)
+    def delete_node(self, surname, name, address):
+        self.delete_node_helper(self.root, surname, name, address)
 
     def __printCall(self, node, indent, last):
         if node != self.NULL:
-            print(indent, end=' ')
+            print(indent, end = ' ')
             if last:
-                print("R----", end=' ')
+                print("R----", end = ' ')
                 indent += "     "
             else:
-                print("L----", end=' ')
+                print("L----", end = ' ')
                 indent += "|    "
             s_color = "RED" if node.color == 1 else "BLACK"
-            print(str(node.val) + "(" + s_color + ")")
+            print(str(node.number) + "(" + s_color + ")")
             self.__printCall(node.left, indent, False)
             self.__printCall(node.right, indent, True)
 
@@ -240,18 +257,85 @@ class RBTree:
     def print_tree(self):
         self.__printCall(self.root, "", True)
 
+
+    def searchElement(self, root, surname, name, address):
+        if root is None or (root.surname == surname and root.name == name and root.address == address):
+            return root
+
+        if root.surname < surname or \
+                (root.surname == surname and root.name < name) or \
+                (root.surname == surname and root.name == name and root.address < address):
+            return self.searchElement(root.right, surname, name, address)
+
+        return self.searchElement(root.left, surname, name, address)
+
+
+    def get_root(self):
+        return self.root
+
+
+def switch_choice(num):
+
+    def add():
+        print("1 - Dodawanie: Podaj w nowych liniach: Imie, Nazwisko, adres, numer(y) telefonu (jak wiecej niz jeden to po spacji)")
+        name = str(input())
+        surname = str(input())
+        address = str(input())
+        number = str(input())
+        bst.insertNode(surname, name, address, number)
+
+
+    def delete():
+        print("2 - Usuwanie: Podaj w nowych liniach: Imie, Nazwisko, adres")
+        name = str(input())
+        surname = str(input())
+        address = str(input())
+        bst.delete_node(surname, name, address)
+
+
+    def search():
+        print("3 - Wyszukiwanie: Podaj w nowych liniach: Imie, Nazwisko, adres")
+        name = str(input())
+        surname = str(input())
+        address = str(input())
+        searched_node = bst.searchElement(bst.get_root(), surname, name, address)
+        print(searched_node.number) if searched_node is not None else print("Abonent nie istnieje")
+
+
+    def save_data():
+        print("dupa save")
+
+
+    def load_data():
+        print("dupa load")
+
+
+    match num:
+        case 1: add()
+        case 2: delete()
+        case 3: search()
+        case 4: save_data()
+        case 5: load_data()
+        case 6: exit()
+        case _: print("Zly przycisk")
+
+    print("\n")
+
+
 if __name__ == '__main__':
     bst = RBTree()
 
-    bst.insertNode(10)
-    bst.insertNode(20)
-    bst.insertNode(30)
-    bst.insertNode(5)
-    bst.insertNode(4)
-    bst.insertNode(2)
+    bst.insertNode("Jachas", "Domino", "Kurwix", 420420)
+    bst.insertNode("Bomba", "Tytus", "Kurwix", 606060)
+    bst.insertNode("Torpeda", "Chorazy", "Kurwix", 696969)
+    # bst.print_tree()
 
-    bst.print_tree()
+    # bst.delete_node("Bomba", "Tytus", "Kurwix")
+    # bst.print_tree()
 
-    print("\nAfter deleting an element")
-    bst.delete_node(2)
-    bst.print_tree()
+    while True:
+        print("Co chcesz zrobic?")
+        print(" 1 - Wstawic nowego abonenta \n 2 - Usunac abonenta \n 3 - Wyszukac numer(y) abonenta \n "
+              "4 - zapis danych do pliku \n 5 - wczytac dane z pliku \n 6 - wyjsc")
+        # break
+        switch_choice(int(input()))
