@@ -1,4 +1,25 @@
 # ASD_Lista4
+
+Program napisany w jezyku Python w wersji 3.10.8 na systemie linux w dystrybucji arch
+
+
+
+Opis załączonych plików:
+
+main.py - program rozwiązujący główne zadanie.
+
+person.binary - plik binarny z danymi do zadania.
+
+convertToBinFromTxt.py - dodatkowy program mający na celu wygenerowanie pliku binarnego z danymi (person.binary) z pliku tekstowego (persons.txt) na wypadek gdyby ktoś usunął wszystkie dane z pliku binarnego. Wrzuciłem dodatkowo gdyby coś się zepsuło w trakcie prezentowania zadania.
+
+test.py - dodatkowy program mający na celu testowanie poprawnej konwersji danych z string -> binary i binary -> string. Wrzuciłem dodatkowo w razie wypadku potwierdzenia prawidłowej konwersji danych.
+
+person.txt - dane do programu zawarte w pliku tekstowym potrzebne do convertToBinFromTxt.py w razie awarii oraz do "podejrzenia" danych.
+
+
+
+Treść zadania:
+
 Ksiazka telefoniczna wariant B
 
 1. Napisać program realizujący książkę telefoniczną w strukturze drzewa AVL.
