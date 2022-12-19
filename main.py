@@ -25,10 +25,10 @@ class RBTree:
     def insertNode(self, person_surname, person_name, person_address, person_number):
         node = Node(person_surname, person_name, person_address, person_number)
         node.parent = None
-        self.NULL.surname = person_surname
-        self.NULL.name = person_name
-        self.NULL.address = person_address
-        self.NULL.number = person_number
+        node.surname = person_surname
+        node.name = person_name
+        node.address = person_address
+        node.number = person_number
         node.left = self.NULL
         node.right = self.NULL
         node.color = 1              # ustawia kolor roota na czerwony
@@ -76,7 +76,7 @@ class RBTree:
         if y.left != self.NULL:
             y.left.parent = x
         y.parent = x.parent
-        if y.left is not None:
+        if x.parent is None:
             self.root = y
         elif x == x.parent.left:
             x.parent.left = y
@@ -91,7 +91,6 @@ class RBTree:
         x.left = y.right            # lewe dziecko x przypisuje na prawe dziecko y
         if y.right != self.NULL:
             y.right.parent = x
-
         y.parent = x.parent         # zmiana rodzica y na rodzica x
         if x.parent is None:
             self.root = y
@@ -239,32 +238,14 @@ class RBTree:
     def delete_node(self, surname, name, address):
         self.delete_node_helper(self.root, surname, name, address)
 
-    def __printCall(self, node, indent, last):
-        if node != self.NULL:
-            print(indent, end = ' ')
-            if last:
-                print("R----", end = ' ')
-                indent += "     "
-            else:
-                print("L----", end = ' ')
-                indent += "|    "
-            s_color = "RED" if node.color == 1 else "BLACK"
-            print(str(node.number) + "(" + s_color + ")")
-            self.__printCall(node.left, indent, False)
-            self.__printCall(node.right, indent, True)
-
-
-    def print_tree(self):
-        self.__printCall(self.root, "", True)
-
 
     def searchElement(self, root, surname, name, address):
         if root is None or (root.surname == surname and root.name == name and root.address == address):
             return root
 
-        if root.surname < surname or \
-                (root.surname == surname and root.name < name) or \
-                (root.surname == surname and root.name == name and root.address < address):
+        if str(root.surname) < surname or \
+                (str(root.surname) == surname and str(root.name) < name) or \
+                (str(root.surname) == surname and str(root.name) == name and str(root.address) < address):
             return self.searchElement(root.right, surname, name, address)
 
         return self.searchElement(root.left, surname, name, address)
@@ -274,8 +255,20 @@ class RBTree:
         return self.root
 
 
-def switch_choice(num):
+    def get_persons(self, node, list_of_persons):
+        if node is None:
+            return
+        self.get_persons(node.left, list_of_persons)
+        person = [node.surname, node.name, node.address, node.number]
+        if person[0] != 0 and person [1] != 0 and person[2] != 0:
+            list_of_persons.append(person)
+        # var = 0 # TODO usunac
+        # var += 1
+        # print(var)
+        self.get_persons(node.right, list_of_persons)
 
+
+def switch_choice(num):
     def add():
         print("1 - Dodawanie: Podaj w nowych liniach: Imie, Nazwisko, adres, numer(y) telefonu (jak wiecej niz jeden to po spacji)")
         name = str(input())
@@ -283,6 +276,7 @@ def switch_choice(num):
         address = str(input())
         number = str(input())
         bst.insertNode(surname, name, address, number)
+        print("Dodano abonenta")
 
 
     def delete():
@@ -303,12 +297,27 @@ def switch_choice(num):
 
 
     def save_data():
-        print("dupa save")
+        print("4 - Zapis: Podaj nazwe pliku:")
+        file_name = str(input())
+        list_of_persons = []
+        bst.get_persons(bst.get_root(), list_of_persons)
+        with open(f'{file_name}', 'w') as file:
+            for person in list_of_persons:
+                file.write(f'{"".join(format(ord(i), "08b") for i in person[0])}  '
+                           f'{"".join(format(ord(i), "08b") for i in person[1])}  '
+                           f'{"".join(format(ord(i), "08b") for i in person[2])}  '
+                           f'{"".join(format(ord(i), "08b") for i in person[3])}  ')
+        print(f"Pomyslnie zapisano do pliku: {file_name}")
+
 
 
     def load_data():
-        print("dupa load")
-
+        with open('persons.txt', 'r', encoding='utf-8') as file:
+            lines = file.readlines()
+        for line in lines:
+            data_line = line.split('  ')
+            bst.insertNode(data_line[0], data_line[1], data_line[2], data_line[3])
+        print("Wczytano dane")
 
     match num:
         case 1: add()
@@ -324,13 +333,14 @@ def switch_choice(num):
 
 if __name__ == '__main__':
     bst = RBTree()
+    bst.insertNode('test', 'test', 'test', '112 997')
 
-    bst.insertNode("Jachas", "Domino", "Kurwix", 420420)
-    bst.insertNode("Bomba", "Tytus", "Kurwix", 606060)
-    bst.insertNode("Torpeda", "Chorazy", "Kurwix", 696969)
+    # bst.insertNode("Kowalski", "Jan", "Bydgoszcz", 420420)
+    # bst.insertNode("Kowalski", "Jan", "Bialystok", 606060)
+    # bst.insertNode("Stefanski", "Stefan", "Stefanowice", 123456)
     # bst.print_tree()
 
-    # bst.delete_node("Bomba", "Tytus", "Kurwix")
+    # bst.delete_node("Kowalski", "Jan", "Bydgoszcz")
     # bst.print_tree()
 
     while True:
