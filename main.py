@@ -268,6 +268,13 @@ class RBTree:
         self.get_persons(node.right, list_of_persons)
 
 
+
+def from_binary_convert_to_string(word):
+    int_word = int(word, base = 2)
+    str_word = int_word.to_bytes((int_word.bit_length() + 7) // 8, 'big').decode()
+    return str_word
+
+
 def switch_choice(num):
     def add():
         print("1 - Dodawanie: Podaj w nowych liniach: Imie, Nazwisko, adres, numer(y) telefonu (jak wiecej niz jeden to po spacji)")
@@ -307,17 +314,27 @@ def switch_choice(num):
                            f'{"".join(format(ord(i), "08b") for i in person[1])}  '
                            f'{"".join(format(ord(i), "08b") for i in person[2])}  '
                            f'{"".join(format(ord(i), "08b") for i in person[3])}  ')
-        print(f"Pomyslnie zapisano do pliku: {file_name}")
+        print(f'Zapisano do pliku: {file_name}')
 
 
 
     def load_data():
-        with open('persons.txt', 'r', encoding='utf-8') as file:
-            lines = file.readlines()
-        for line in lines:
-            data_line = line.split('  ')
-            bst.insertNode(data_line[0], data_line[1], data_line[2], data_line[3])
-        print("Wczytano dane")
+        print('5 - Wczytywanie danych: Podaj nazwę pliku:')
+        file_name = str(input())
+
+        with open(f'{file_name}', 'r') as file:
+            data_line = file.readline()
+            data = data_line.split('  ')
+            for i in range(0, len(data) - 1, 4):
+                bst.insertNode(from_binary_convert_to_string(data[i]),
+                               from_binary_convert_to_string(data[i + 1]),
+                               from_binary_convert_to_string(data[i + 2]),
+                               from_binary_convert_to_string(data[i + 3]))
+            print('Wczytano dane')
+
+
+
+
 
     match num:
         case 1: add()
@@ -333,19 +350,8 @@ def switch_choice(num):
 
 if __name__ == '__main__':
     bst = RBTree()
-    bst.insertNode('test', 'test', 'test', '112 997')
-
-    # bst.insertNode("Kowalski", "Jan", "Bydgoszcz", 420420)
-    # bst.insertNode("Kowalski", "Jan", "Bialystok", 606060)
-    # bst.insertNode("Stefanski", "Stefan", "Stefanowice", 123456)
-    # bst.print_tree()
-
-    # bst.delete_node("Kowalski", "Jan", "Bydgoszcz")
-    # bst.print_tree()
-
     while True:
         print("Co chcesz zrobic?")
         print(" 1 - Wstawic nowego abonenta \n 2 - Usunac abonenta \n 3 - Wyszukac numer(y) abonenta \n "
               "4 - zapis danych do pliku \n 5 - wczytac dane z pliku \n 6 - wyjsc")
-        # break
         switch_choice(int(input()))
