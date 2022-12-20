@@ -1,6 +1,6 @@
 class Node:                         # 0 - czarny, 1 - czerwony
     def __init__(self, person_surname, person_name, person_address, person_number):
-        self.surname = person_surname            # Wartosc wezla
+        self.surname = person_surname
         self.name = person_name
         self.address = person_address
         self.number = person_number
@@ -8,6 +8,7 @@ class Node:                         # 0 - czarny, 1 - czerwony
         self.left = None            # Lewe dziecko wezla
         self.right = None           # Prawe dziecko wezla
         self.color = 1              # Czerwony wezel ktory jest nowo wstaiony zawsze jest jako czerwony
+
 
 class RBTree:
     def __init__(self):
@@ -44,7 +45,6 @@ class RBTree:
                 x = x.left
             else:
                 x = x.right
-
         node.parent = y
         if y is None:               # jesli wezel po przypisaniu nie ma rodzica, to jest to root
             self.root = node
@@ -54,13 +54,11 @@ class RBTree:
             y.left = node
         else:
             y.right = node
-
         if node.parent is None:         # root jest zawsze czarny
             node.color = 0
             return
         if node.parent.parent is None:  # czy rodzic wezla jest rootem
             return
-
         self.fixInsert(node)            # Jesli nie zakonczy wyzej, to naprawi wstawianie
 
 
@@ -184,6 +182,7 @@ class RBTree:
                     x = self.root
         x.color = 0
 
+
     def __rb_transplant(self, u, v):
         if u.parent is None:
             self.root = v
@@ -262,11 +261,7 @@ class RBTree:
         person = [node.surname, node.name, node.address, node.number]
         if person[0] != 0 and person [1] != 0 and person[2] != 0:
             list_of_persons.append(person)
-        # var = 0 # TODO usunac
-        # var += 1
-        # print(var)
         self.get_persons(node.right, list_of_persons)
-
 
 
 def from_binary_convert_to_string(word):
@@ -282,7 +277,7 @@ def switch_choice(num):
         surname = str(input())
         address = str(input())
         number = str(input())
-        bst.insertNode(surname, name, address, number)
+        phone_book.insertNode(surname, name, address, number)
         print("Dodano abonenta")
 
 
@@ -291,7 +286,7 @@ def switch_choice(num):
         name = str(input())
         surname = str(input())
         address = str(input())
-        bst.delete_node(surname, name, address)
+        phone_book.delete_node(surname, name, address)
 
 
     def search():
@@ -299,7 +294,7 @@ def switch_choice(num):
         name = str(input())
         surname = str(input())
         address = str(input())
-        searched_node = bst.searchElement(bst.get_root(), surname, name, address)
+        searched_node = phone_book.searchElement(phone_book.get_root(), surname, name, address)
         print(searched_node.number) if searched_node is not None else print("Abonent nie istnieje")
 
 
@@ -307,7 +302,8 @@ def switch_choice(num):
         print("4 - Zapis: Podaj nazwe pliku:")
         file_name = str(input())
         list_of_persons = []
-        bst.get_persons(bst.get_root(), list_of_persons)
+        phone_book.get_persons(phone_book.get_root(), list_of_persons)
+
         with open(f'{file_name}', 'w') as file:
             for person in list_of_persons:
                 file.write(f'{"".join(format(ord(i), "08b") for i in person[0])}  '
@@ -315,7 +311,6 @@ def switch_choice(num):
                            f'{"".join(format(ord(i), "08b") for i in person[2])}  '
                            f'{"".join(format(ord(i), "08b") for i in person[3])}  ')
         print(f'Zapisano do pliku: {file_name}')
-
 
 
     def load_data():
@@ -326,14 +321,11 @@ def switch_choice(num):
             data_line = file.readline()
             data = data_line.split('  ')
             for i in range(0, len(data) - 1, 4):
-                bst.insertNode(from_binary_convert_to_string(data[i]),
-                               from_binary_convert_to_string(data[i + 1]),
-                               from_binary_convert_to_string(data[i + 2]),
-                               from_binary_convert_to_string(data[i + 3]))
-            print('Wczytano dane')
-
-
-
+                phone_book.insertNode(from_binary_convert_to_string(data[i]),
+                                      from_binary_convert_to_string(data[i + 1]),
+                                      from_binary_convert_to_string(data[i + 2]),
+                                      from_binary_convert_to_string(data[i + 3]))
+            print(f'Wczytano dane z pliku: {file_name}')
 
 
     match num:
@@ -349,7 +341,7 @@ def switch_choice(num):
 
 
 if __name__ == '__main__':
-    bst = RBTree()
+    phone_book = RBTree()
     while True:
         print("Co chcesz zrobic?")
         print(" 1 - Wstawic nowego abonenta \n 2 - Usunac abonenta \n 3 - Wyszukac numer(y) abonenta \n "
