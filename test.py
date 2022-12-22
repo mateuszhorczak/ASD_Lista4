@@ -1,4 +1,5 @@
 # Program do testowania poprawnosci konwersji BinToTxt i TxtToBin
+# Nie wykorzystywany w programie, na pamiatke xd
 
 def from_binary_convert_to_string(word):
     int_word = int(word, base = 2)
