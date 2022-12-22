@@ -10,7 +10,7 @@ class Node:                         # 0 - czarny, 1 - czerwony
         self.color = 1              # Czerwony wezel ktory jest nowo wstaiony zawsze jest jako czerwony
 
 
-class RBTree:
+class RBTree:   # zlozonosc pamieciowa O(n), gdzie n to liczba wezlow, dokladna O(9n)
     def __init__(self):
         self.NULL = Node(0, 0, 0, 0)
         self.NULL.color = 0
@@ -23,7 +23,7 @@ class RBTree:
         self.root = self.NULL
 
 
-    def insertNode(self, person_surname, person_name, person_address, person_number):
+    def insertNode(self, person_surname, person_name, person_address, person_number):   # O(log n)
         node = Node(person_surname, person_name, person_address, person_number)
         node.parent = None
         node.surname = person_surname
@@ -234,11 +234,11 @@ class RBTree:
         print("Poprawnie usunieto osobe")
 
 
-    def delete_node(self, surname, name, address):
+    def delete_node(self, surname, name, address):  # O(log n)
         self.delete_node_helper(self.root, surname, name, address)
 
 
-    def searchElement(self, root, surname, name, address):
+    def searchElement(self, root, surname, name, address):   # O(log n)
         if root is None or (root.surname == surname and root.name == name and root.address == address):
             return root
 
