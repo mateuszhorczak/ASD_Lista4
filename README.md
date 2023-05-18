@@ -1,5 +1,7 @@
 # ASD_Lista4
 
+robiony na RBT tree, poprawiany pozniej na AVL tree
+
 Program napisany w jezyku Python w wersji 3.10.8 na systemie linux w dystrybucji arch
 
 
